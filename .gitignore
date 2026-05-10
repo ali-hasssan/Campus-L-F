@@ -18,9 +18,7 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
+# VS Code
 #.vscode/
 
 # Flutter/Dart/Pub related
@@ -39,7 +37,40 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+# Android Studio build artifacts
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# ─── Firebase / Google Services — SENSITIVE, never push ───────────────────────
+# Ye files apki Firebase project ki private keys hain
+google-services.json
+GoogleService-Info.plist
+
+# Firebase CLI & local config
+.firebaserc
+firebase.json
+firestore.rules
+firestore.indexes.json
+storage.rules
+
+# Environment / secrets
+.env
+.env.*
+*.secret
+secrets.dart
+lib/config/secrets.dart
+
+# ─── iOS specific ─────────────────────────────────────────────────────────────
+ios/Runner/GoogleService-Info.plist
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# ─── Android specific ─────────────────────────────────────────────────────────
+android/app/google-services.json
+android/local.properties
+android/key.properties
+*.jks
+*.keystore
