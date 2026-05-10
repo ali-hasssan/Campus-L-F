@@ -55,7 +55,7 @@ class CampusLFApp extends StatelessWidget {
   }
 }
 
-// ─── App-wide constants ────────────────────────────────────────────────────────
+// App-wide constants
 class AppK {
   static const categories = [
     'ID Card', 'Mobile', 'Bag', 'Keys', 'Wallet', 'Laptop', 'Other'

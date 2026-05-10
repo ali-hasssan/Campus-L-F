@@ -15,6 +15,13 @@ class PostModel {
   final DateTime timestamp;
   final List<String> images;
 
+  // ── Resolved info — jis user ka saath item resolve hua
+  final String resolvedWithUserId;
+  final String resolvedWithUserName;
+  final String resolvedWithUserDept;
+  final String resolvedWithUserPhoto;
+  final DateTime? resolvedAt;
+
   const PostModel({
     required this.id,
     required this.userId,
@@ -31,6 +38,11 @@ class PostModel {
     this.status = 'active',
     required this.timestamp,
     this.images = const [],
+    this.resolvedWithUserId = '',
+    this.resolvedWithUserName = '',
+    this.resolvedWithUserDept = '',
+    this.resolvedWithUserPhoto = '',
+    this.resolvedAt,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> j) => PostModel(
@@ -49,6 +61,13 @@ class PostModel {
         status: j['status'] ?? 'active',
         timestamp: DateTime.parse(j['timestamp']),
         images: List<String>.from(j['images'] ?? []),
+        resolvedWithUserId: j['resolvedWithUserId'] ?? '',
+        resolvedWithUserName: j['resolvedWithUserName'] ?? '',
+        resolvedWithUserDept: j['resolvedWithUserDept'] ?? '',
+        resolvedWithUserPhoto: j['resolvedWithUserPhoto'] ?? '',
+        resolvedAt: j['resolvedAt'] != null
+            ? DateTime.parse(j['resolvedAt'])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -67,6 +86,11 @@ class PostModel {
         'status': status,
         'timestamp': timestamp.toIso8601String(),
         'images': images,
+        'resolvedWithUserId': resolvedWithUserId,
+        'resolvedWithUserName': resolvedWithUserName,
+        'resolvedWithUserDept': resolvedWithUserDept,
+        'resolvedWithUserPhoto': resolvedWithUserPhoto,
+        'resolvedAt': resolvedAt?.toIso8601String(),
       };
 
   PostModel copyWith({
@@ -80,6 +104,11 @@ class PostModel {
     String? userDepartment,
     String? userPhotoUrl,
     List<String>? images,
+    String? resolvedWithUserId,
+    String? resolvedWithUserName,
+    String? resolvedWithUserDept,
+    String? resolvedWithUserPhoto,
+    DateTime? resolvedAt,
   }) =>
       PostModel(
         id: id,
@@ -97,5 +126,11 @@ class PostModel {
         status: status ?? this.status,
         timestamp: timestamp,
         images: images ?? this.images,
+        resolvedWithUserId: resolvedWithUserId ?? this.resolvedWithUserId,
+        resolvedWithUserName: resolvedWithUserName ?? this.resolvedWithUserName,
+        resolvedWithUserDept: resolvedWithUserDept ?? this.resolvedWithUserDept,
+        resolvedWithUserPhoto:
+            resolvedWithUserPhoto ?? this.resolvedWithUserPhoto,
+        resolvedAt: resolvedAt ?? this.resolvedAt,
       );
 }

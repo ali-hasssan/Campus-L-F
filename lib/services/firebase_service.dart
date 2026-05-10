@@ -233,6 +233,33 @@ class FirebaseService {
     });
   }
 
+  /// Chat kar chuke saare users return karta hai [userId] ke liye
+  static Future<List<UserModel>> getChatPartners(String userId) async {
+    try {
+      final snap = await _chats
+          .where('participants', arrayContains: userId)
+          .get();
+
+      final partnerIds = <String>{};
+      for (final doc in snap.docs) {
+        final d = doc.data() as Map<String, dynamic>;
+        final participants = List<String>.from(d['participants'] ?? []);
+        for (final id in participants) {
+          if (id != userId) partnerIds.add(id);
+        }
+      }
+
+      final users = <UserModel>[];
+      for (final id in partnerIds) {
+        final u = await _fetchUserById(id);
+        if (u != null) users.add(u);
+      }
+      return users;
+    } catch (_) {
+      return [];
+    }
+  }
+
   // ─── Private helpers ─────────────────────────────────────────────────────────
 
   static Future<UserModel?> _fetchUserById(String uid) async {
