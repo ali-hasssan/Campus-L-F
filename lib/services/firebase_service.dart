@@ -306,6 +306,14 @@ class FirebaseService {
         'status': p.status,
         'timestamp': Timestamp.fromDate(p.timestamp),
         'images': p.images,
+        // ── Resolved fields
+        'resolvedWithUserId': p.resolvedWithUserId,
+        'resolvedWithUserName': p.resolvedWithUserName,
+        'resolvedWithUserDept': p.resolvedWithUserDept,
+        'resolvedWithUserPhoto': p.resolvedWithUserPhoto,
+        'resolvedAt': p.resolvedAt != null
+            ? Timestamp.fromDate(p.resolvedAt!)
+            : null,
       };
 
   static PostModel _postFromFirestore(DocumentSnapshot doc) {
@@ -313,6 +321,12 @@ class FirebaseService {
     final ts = d['timestamp'];
     final DateTime dateTime =
         ts is Timestamp ? ts.toDate() : DateTime.parse(ts as String);
+
+    // resolvedAt — Timestamp ya null
+    DateTime? resolvedAt;
+    final rts = d['resolvedAt'];
+    if (rts is Timestamp) resolvedAt = rts.toDate();
+
     return PostModel(
       id: d['id'] as String? ?? doc.id,
       userId: d['userId'] as String,
@@ -328,7 +342,13 @@ class FirebaseService {
       type: d['type'] as String,
       status: d['status'] as String? ?? 'active',
       timestamp: dateTime,
-      images: List<String>.from(d['images'] ?? []), // ← NEW
+      images: List<String>.from(d['images'] ?? []),
+      // ── Resolved fields
+      resolvedWithUserId: d['resolvedWithUserId'] as String? ?? '',
+      resolvedWithUserName: d['resolvedWithUserName'] as String? ?? '',
+      resolvedWithUserDept: d['resolvedWithUserDept'] as String? ?? '',
+      resolvedWithUserPhoto: d['resolvedWithUserPhoto'] as String? ?? '',
+      resolvedAt: resolvedAt,
     );
   }
 }
