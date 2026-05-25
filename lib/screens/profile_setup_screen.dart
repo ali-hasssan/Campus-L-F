@@ -18,10 +18,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   String? _dept;
   String? _sem;
   bool _loading = false;
-  bool _prefilled = false;          // guard so we only pre-fill once
+  bool _prefilled = false;
 
   File? _profileImage;
-  String _existingPhotoUrl = '';   // show existing photo in edit mode
+  String _existingPhotoUrl = '';
   final _picker = ImagePicker();
 
   @override
@@ -36,7 +36,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     setState(() {
       _phoneCtrl.text = user.phone;
       _dept = user.department.isNotEmpty ? user.department : null;
-      _sem  = user.semester.isNotEmpty  ? user.semester  : null;
+      _sem = user.semester.isNotEmpty ? user.semester : null;
       _existingPhotoUrl = user.profileImageUrl;
       _prefilled = true;
     });
@@ -68,9 +68,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     setState(() => _loading = true);
 
     final user = await FirebaseService.getCurrentUser();
-    if (user == null) { setState(() => _loading = false); return; }
+    if (user == null) {
+      setState(() => _loading = false);
+      return;
+    }
 
-    // Upload profile image if picked
+    // Upload profile image
     String profileImageUrl = user.profileImageUrl;
     if (_profileImage != null) {
       try {
@@ -109,9 +112,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.isEditMode
-          ? AppBar(title: const Text('Edit Profile'))
-          : null,
+      appBar:
+          widget.isEditMode ? AppBar(title: const Text('Edit Profile')) : null,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -120,7 +122,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             children: [
               SizedBox(height: widget.isEditMode ? 20 : 48),
 
-              // ── Profile image picker ──────────────────────────────────────
+              //  Profile image picker
               Center(
                 child: Stack(
                   children: [
@@ -131,9 +133,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         height: 100,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: (_profileImage == null && _existingPhotoUrl.isEmpty)
+                          gradient: (_profileImage == null &&
+                                  _existingPhotoUrl.isEmpty)
                               ? const LinearGradient(
-                                  colors: [Color(0xFF5B4FE9), Color(0xFF7C3AED)],
+                                  colors: [
+                                    Color(0xFF5B4FE9),
+                                    Color(0xFF7C3AED)
+                                  ],
                                 )
                               : null,
                           border: Border.all(
@@ -159,9 +165,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                       fit: BoxFit.cover,
                                       width: 100,
                                       height: 100,
-                                      errorBuilder: (_, __, ___) =>
-                                          const Icon(Icons.person_rounded,
-                                              color: Colors.white, size: 48),
+                                      errorBuilder: (_, __, ___) => const Icon(
+                                          Icons.person_rounded,
+                                          color: Colors.white,
+                                          size: 48),
                                     ),
                                   )
                                 : const Icon(Icons.person_rounded,
@@ -170,11 +177,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     ),
                     // Camera badge
                     Positioned(
-                      bottom: 0, right: 0,
+                      bottom: 0,
+                      right: 0,
                       child: GestureDetector(
                         onTap: _pickProfileImage,
                         child: Container(
-                          width: 30, height: 30,
+                          width: 30,
+                          height: 30,
                           decoration: BoxDecoration(
                             color: AppTheme.primary,
                             shape: BoxShape.circle,
@@ -259,13 +268,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       onPressed: _loading ? null : _save,
                       child: _loading
                           ? const SizedBox(
-                              width: 22, height: 22,
+                              width: 22,
+                              height: 22,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white),
                             )
                           : Text(widget.isEditMode
-                                ? 'Save Changes'
-                                : 'Complete Profile'),
+                              ? 'Save Changes'
+                              : 'Complete Profile'),
                     ),
                     const SizedBox(height: 24),
                   ],

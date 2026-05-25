@@ -38,8 +38,6 @@ class ChatsScreen extends StatelessWidget {
 
                   final raw = snap.data?.docs ?? [];
 
-                  // Sort by lastMessageTime desc in Dart — Firestore orderBy
-                  // removed to avoid composite-index requirement
                   final docs = List.of(raw)
                     ..sort((a, b) {
                       final aTs =
@@ -51,7 +49,7 @@ class ChatsScreen extends StatelessWidget {
                       if (aTs == null && bTs == null) return 0;
                       if (aTs == null) return 1;
                       if (bTs == null) return -1;
-                      return bTs.compareTo(aTs); // newest first
+                      return bTs.compareTo(aTs);
                     });
 
                   if (docs.isEmpty) {
@@ -63,14 +61,13 @@ class ChatsScreen extends StatelessWidget {
                               size: 72,
                               color: AppTheme.txtSec.withOpacity(0.3)),
                           const SizedBox(height: 16),
-                          const Text('Koi conversation nahi abhi',
+                          const Text('No conversation yet',
                               style: TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w600,
                                   color: AppTheme.txtPri)),
                           const SizedBox(height: 6),
-                          const Text(
-                              'Kisi ki post detail mein ja kar\nchat start karo',
+                          const Text('Go to someone post detail\nto start chat',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 13, color: AppTheme.txtSec)),
@@ -106,7 +103,7 @@ class ChatsScreen extends StatelessWidget {
                       final hasUnread =
                           unreadBy != null && unreadBy[myUid] == true;
 
-                      // ── Fetch fresh photo from user doc ──────────────────────
+                      // Fetch fresh photo from user doc
                       return FutureBuilder<_UserPhoto>(
                         future: FirebaseService.getUserById(otherUid)
                             .then((u) => _UserPhoto(u?.profileImageUrl ?? '')),
@@ -211,7 +208,7 @@ class ChatsScreen extends StatelessWidget {
   String _formatTime(DateTime dt) {
     final now = DateTime.now();
     final diff = now.difference(dt);
-    if (diff.inMinutes < 1) return 'Abhi';
+    if (diff.inMinutes < 1) return 'Now';
     if (diff.inHours < 1) return '${diff.inMinutes}m';
     if (diff.inDays < 1) return '${diff.inHours}h';
     if (diff.inDays < 7) return '${diff.inDays}d';
@@ -219,7 +216,6 @@ class ChatsScreen extends StatelessWidget {
   }
 }
 
-// Simple wrapper so FutureBuilder has a typed result
 class _UserPhoto {
   final String url;
   const _UserPhoto(this.url);

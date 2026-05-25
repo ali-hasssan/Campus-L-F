@@ -136,7 +136,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// Shared small widgets
 class _ErrorBox extends StatelessWidget {
   final String message;
   const _ErrorBox(this.message);

@@ -36,7 +36,11 @@ class _MyPostsScreenState extends State<MyPostsScreen>
     final user = await FirebaseService.getCurrentUser();
     if (user == null) return;
     final posts = await FirebaseService.getPostsByUser(user.id);
-    if (mounted) setState(() { _posts = posts; _loading = false; });
+    if (mounted)
+      setState(() {
+        _posts = posts;
+        _loading = false;
+      });
   }
 
   List<PostModel> _byStatus(String status) =>
@@ -46,8 +50,7 @@ class _MyPostsScreenState extends State<MyPostsScreen>
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: const Text('Logout'),
         content: const Text('Are you sure you want to logout?'),
         actions: [
@@ -56,16 +59,15 @@ class _MyPostsScreenState extends State<MyPostsScreen>
               child: const Text('Cancel')),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Logout',
-                  style: TextStyle(color: AppTheme.lost))),
+              child:
+                  const Text('Logout', style: TextStyle(color: AppTheme.lost))),
         ],
       ),
     );
     if (confirm == true) {
       await FirebaseService.clearSession();
       if (!mounted) return;
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/login', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
     }
   }
 
@@ -79,8 +81,7 @@ class _MyPostsScreenState extends State<MyPostsScreen>
           children: [
             // ── Header
             Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
               child: Row(
                 children: [
                   Expanded(
@@ -96,8 +97,7 @@ class _MyPostsScreenState extends State<MyPostsScreen>
                           Text(
                             '${user.department} • ${user.semester} Sem',
                             style: const TextStyle(
-                                fontSize: 13,
-                                color: AppTheme.txtSec),
+                                fontSize: 13, color: AppTheme.txtSec),
                           ),
                       ],
                     ),
@@ -117,7 +117,7 @@ class _MyPostsScreenState extends State<MyPostsScreen>
                 ],
               ),
             ),
-            // ── Profile summary
+            //  Profile summary
             if (user != null) ...[
               const SizedBox(height: 16),
               _ProfileCard(user: user, postCount: _posts.length),
@@ -125,8 +125,7 @@ class _MyPostsScreenState extends State<MyPostsScreen>
             const SizedBox(height: 16),
             // ── Tab bar
             Container(
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: AppTheme.surface,
                 borderRadius: BorderRadius.circular(14),
@@ -143,8 +142,8 @@ class _MyPostsScreenState extends State<MyPostsScreen>
                 dividerColor: Colors.transparent,
                 labelColor: Colors.white,
                 unselectedLabelColor: AppTheme.txtSec,
-                labelStyle: const TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.w600),
+                labelStyle:
+                    const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                 tabs: [
                   _tab_item('Active', _byStatus('active').length),
                   _tab_item('Claimed', _byStatus('claimed').length),
@@ -153,12 +152,11 @@ class _MyPostsScreenState extends State<MyPostsScreen>
               ),
             ),
             const SizedBox(height: 12),
-            // ── Content
+            //  Content
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                          color: AppTheme.primary))
+                      child: CircularProgressIndicator(color: AppTheme.primary))
                   : TabBarView(
                       controller: _tab,
                       children: [
@@ -192,14 +190,12 @@ class _MyPostsScreenState extends State<MyPostsScreen>
             if (count > 0) ...[
               const SizedBox(width: 4),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.25),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text('$count',
-                    style: const TextStyle(fontSize: 11)),
+                child: Text('$count', style: const TextStyle(fontSize: 11)),
               ),
             ],
           ],
@@ -207,7 +203,7 @@ class _MyPostsScreenState extends State<MyPostsScreen>
       );
 }
 
-// ─── Profile Card ─────────────────────────────────────────────────────────────
+//  Profile Card
 class _ProfileCard extends StatelessWidget {
   final UserModel user;
   final int postCount;
@@ -233,9 +229,8 @@ class _ProfileCard extends StatelessWidget {
               backgroundImage: user.profileImageUrl.isNotEmpty
                   ? NetworkImage(user.profileImageUrl)
                   : null,
-              onBackgroundImageError: user.profileImageUrl.isNotEmpty
-                  ? (_, __) {}
-                  : null,
+              onBackgroundImageError:
+                  user.profileImageUrl.isNotEmpty ? (_, __) {} : null,
               child: user.profileImageUrl.isNotEmpty
                   ? null
                   : Text(
@@ -259,19 +254,16 @@ class _ProfileCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(user.email,
                       style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 12)),
+                          color: Colors.white.withOpacity(0.8), fontSize: 12)),
                   const SizedBox(height: 2),
                   Text(user.phone,
                       style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 12)),
+                          color: Colors.white.withOpacity(0.8), fontSize: 12)),
                 ],
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(10),
@@ -284,9 +276,7 @@ class _ProfileCard extends StatelessWidget {
                           fontSize: 22,
                           fontWeight: FontWeight.w700)),
                   const Text('Posts',
-                      style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 11)),
+                      style: TextStyle(color: Colors.white70, fontSize: 11)),
                 ],
               ),
             ),
@@ -295,7 +285,7 @@ class _ProfileCard extends StatelessWidget {
       );
 }
 
-// ─── Post List per Tab ────────────────────────────────────────────────────────
+//  Post List per Tab
 class _PostList extends StatelessWidget {
   final List<PostModel> posts;
   final String emptyMsg;
@@ -349,7 +339,7 @@ class _PostList extends StatelessWidget {
   }
 }
 
-// ─── Resolved Post Card — full details + resolved user ────────────────────────
+//  Resolved Post Card — full details + resolved user
 class _ResolvedPostCard extends StatelessWidget {
   final PostModel post;
   const _ResolvedPostCard({required this.post});
@@ -359,16 +349,16 @@ class _ResolvedPostCard extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Post Delete Karo?'),
-        content: const Text('Ye post permanently delete ho jayegi.'),
+        title: const Text('Post Delete?'),
+        content: const Text('This post will delete permanently.'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: const Text('Cancel')),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Delete',
-                  style: TextStyle(color: AppTheme.lost))),
+              child:
+                  const Text('Delete', style: TextStyle(color: AppTheme.lost))),
         ],
       ),
     );
@@ -406,8 +396,7 @@ class _ResolvedPostCard extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      _FullScreenImage(imageUrl: post.images.first),
+                  builder: (_) => _FullScreenImage(imageUrl: post.images.first),
                 ),
               ),
               child: ClipRRect(
@@ -428,7 +417,7 @@ class _ResolvedPostCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Badges + delete button row
+                //  Badges + delete button row
                 Row(
                   children: [
                     _Badge(label: isLost ? 'LOST' : 'FOUND', color: typeColor),
@@ -441,7 +430,8 @@ class _ResolvedPostCard extends StatelessWidget {
                     GestureDetector(
                       onTap: () => _confirmDelete(context),
                       child: Container(
-                        width: 32, height: 32,
+                        width: 32,
+                        height: 32,
                         decoration: BoxDecoration(
                           color: AppTheme.lost.withOpacity(0.09),
                           borderRadius: BorderRadius.circular(8),
@@ -478,17 +468,15 @@ class _ResolvedPostCard extends StatelessWidget {
                         color: AppTheme.txtPri)),
                 const SizedBox(height: 6),
 
-                // ── Description
+                //  Description
                 Text(post.description,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                        fontSize: 13,
-                        color: AppTheme.txtSec,
-                        height: 1.5)),
+                        fontSize: 13, color: AppTheme.txtSec, height: 1.5)),
                 const SizedBox(height: 12),
 
-                // ── Area + Color
+                //  Area + Color
                 Row(
                   children: [
                     const Icon(Icons.location_on_outlined,
@@ -499,7 +487,8 @@ class _ResolvedPostCard extends StatelessWidget {
                             fontSize: 13, color: AppTheme.txtSec)),
                     const SizedBox(width: 16),
                     Container(
-                      width: 11, height: 11,
+                      width: 11,
+                      height: 11,
                       decoration: BoxDecoration(
                         color: _colorFromName(post.color),
                         shape: BoxShape.circle,
@@ -513,7 +502,7 @@ class _ResolvedPostCard extends StatelessWidget {
                   ],
                 ),
 
-                // ── Resolved user box
+                //  Resolved user box
                 if (hasResolvedUser) ...[
                   const SizedBox(height: 14),
                   const Divider(height: 1, color: AppTheme.border),
@@ -523,19 +512,17 @@ class _ResolvedPostCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppTheme.found.withOpacity(0.06),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: AppTheme.found.withOpacity(0.25)),
+                      border:
+                          Border.all(color: AppTheme.found.withOpacity(0.25)),
                     ),
                     child: Row(
                       children: [
                         CircleAvatar(
                           radius: 24,
-                          backgroundColor:
-                              AppTheme.primary.withOpacity(0.12),
-                          backgroundImage:
-                              post.resolvedWithUserPhoto.isNotEmpty
-                                  ? NetworkImage(post.resolvedWithUserPhoto)
-                                  : null,
+                          backgroundColor: AppTheme.primary.withOpacity(0.12),
+                          backgroundImage: post.resolvedWithUserPhoto.isNotEmpty
+                              ? NetworkImage(post.resolvedWithUserPhoto)
+                              : null,
                           child: post.resolvedWithUserPhoto.isEmpty
                               ? Text(
                                   post.resolvedWithUserName[0].toUpperCase(),
@@ -553,8 +540,7 @@ class _ResolvedPostCard extends StatelessWidget {
                             children: [
                               const Text('Resolved with',
                                   style: TextStyle(
-                                      fontSize: 11,
-                                      color: AppTheme.txtSec)),
+                                      fontSize: 11, color: AppTheme.txtSec)),
                               const SizedBox(height: 3),
                               Text(post.resolvedWithUserName,
                                   style: const TextStyle(
@@ -592,16 +578,22 @@ class _ResolvedPostCard extends StatelessWidget {
 
   Color _colorFromName(String name) {
     const map = {
-      'Black': Colors.black87, 'White': Colors.white70,
-      'Red': Colors.red, 'Blue': Colors.blue, 'Green': Colors.green,
-      'Yellow': Colors.yellow, 'Brown': Colors.brown, 'Grey': Colors.grey,
-      'Pink': Colors.pink, 'Orange': Colors.orange,
+      'Black': Colors.black87,
+      'White': Colors.white70,
+      'Red': Colors.red,
+      'Blue': Colors.blue,
+      'Green': Colors.green,
+      'Yellow': Colors.yellow,
+      'Brown': Colors.brown,
+      'Grey': Colors.grey,
+      'Pink': Colors.pink,
+      'Orange': Colors.orange,
     };
     return map[name] ?? Colors.blueGrey;
   }
 }
 
-// ─── Full Screen Image Viewer ─────────────────────────────────────────────────
+//  Full Screen Image Viewer
 class _FullScreenImage extends StatelessWidget {
   final String imageUrl;
   const _FullScreenImage({required this.imageUrl});
@@ -637,8 +629,7 @@ class _FullScreenImage extends StatelessWidget {
   }
 }
 
-
-// ─── Small badge widget ───────────────────────────────────────────────────────
+//  Small badge widget
 class _Badge extends StatelessWidget {
   final String label;
   final Color color;

@@ -58,7 +58,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     }
   }
 
-  // ── Fetch chat partners for this post owner and show picker ──────────────
+  //  Fetch chat partners for this post owner and show picker
   Future<void> _showResolveSheet() async {
     // Get all chats where current user is a participant
     final chatUsers = await FirebaseService.getChatPartners(_post.userId);
@@ -124,8 +124,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               child: const Text('Cancel')),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Delete',
-                  style: TextStyle(color: AppTheme.lost))),
+              child:
+                  const Text('Delete', style: TextStyle(color: AppTheme.lost))),
         ],
       ),
     );
@@ -155,8 +155,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   borderRadius: BorderRadius.circular(14)),
               onSelected: (v) {
                 if (v == 'edit') {
-                  Navigator.pushNamed(context, '/create-post',
-                          arguments: _post)
+                  Navigator.pushNamed(context, '/create-post', arguments: _post)
                       .then((_) async {
                     final posts = await FirebaseService.getPosts();
                     final updated =
@@ -183,8 +182,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       Icon(Icons.delete_outline_rounded,
                           size: 18, color: AppTheme.lost),
                       SizedBox(width: 10),
-                      Text('Delete',
-                          style: TextStyle(color: AppTheme.lost)),
+                      Text('Delete', style: TextStyle(color: AppTheme.lost)),
                     ])),
               ],
             ),
@@ -260,10 +258,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           color: AppTheme.txtPri)),
                   const SizedBox(height: 6),
                   Text(
-                    DateFormat('MMMM d, yyyy • h:mm a')
-                        .format(_post.timestamp),
-                    style: const TextStyle(
-                        fontSize: 12, color: AppTheme.txtSec),
+                    DateFormat('MMMM d, yyyy • h:mm a').format(_post.timestamp),
+                    style:
+                        const TextStyle(fontSize: 12, color: AppTheme.txtSec),
                   ),
                 ],
               ),
@@ -292,10 +289,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           borderRadius: BorderRadius.circular(12),
                           child: Image.network(
                             _post.images[i],
-                            width: 110, height: 110,
+                            width: 110,
+                            height: 110,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(
-                              width: 110, height: 110,
+                              width: 110,
+                              height: 110,
                               decoration: BoxDecoration(
                                 color: AppTheme.border,
                                 borderRadius: BorderRadius.circular(12),
@@ -352,85 +351,84 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               builder: (ctx, photoSnap) {
                 final photoUrl = photoSnap.data ?? '';
                 return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.border),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: AppTheme.primary.withOpacity(0.12),
-                    backgroundImage: photoUrl.isNotEmpty
-                        ? NetworkImage(photoUrl)
-                        : null,
-                    child: photoUrl.isEmpty
-                        ? Text(
-                            _post.userName.isNotEmpty
-                                ? _post.userName[0].toUpperCase()
-                                : 'U',
-                            style: const TextStyle(
-                                color: AppTheme.primary,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20),
-                          )
-                        : null,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppTheme.border),
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(_post.userName,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                                color: AppTheme.txtPri)),
-                        const SizedBox(height: 2),
-                        // ── Department (phone ki jagah) ──
-                        Text(
-                          _post.userDepartment.isNotEmpty
-                              ? _post.userDepartment
-                              : 'Department not set',
-                          style: const TextStyle(
-                              fontSize: 13, color: AppTheme.txtSec),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // ── Chat icon (copy icon ki jagah) — sirf doosron ke liye ──
-                  if (!_isOwner)
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChatScreen(
-                              otherUserId: _post.userId,
-                              otherUserName: _post.userName,
-                              otherUserPhotoUrl: photoUrl, // fresh photo
-                              referencedPost: _post,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.chat_bubble_outline_rounded,
-                            color: AppTheme.primary, size: 20),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: AppTheme.primary.withOpacity(0.12),
+                        backgroundImage:
+                            photoUrl.isNotEmpty ? NetworkImage(photoUrl) : null,
+                        child: photoUrl.isEmpty
+                            ? Text(
+                                _post.userName.isNotEmpty
+                                    ? _post.userName[0].toUpperCase()
+                                    : 'U',
+                                style: const TextStyle(
+                                    color: AppTheme.primary,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 20),
+                              )
+                            : null,
                       ),
-                    ),
-                ],
-              ),
-            );  // ← FutureBuilder close
-            },
-          ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(_post.userName,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                    color: AppTheme.txtPri)),
+                            const SizedBox(height: 2),
+                            // ── Department (phone ki jagah) ──
+                            Text(
+                              _post.userDepartment.isNotEmpty
+                                  ? _post.userDepartment
+                                  : 'Department not set',
+                              style: const TextStyle(
+                                  fontSize: 13, color: AppTheme.txtSec),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // ── Chat icon — sirf doosron ke liye
+                      if (!_isOwner)
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChatScreen(
+                                  otherUserId: _post.userId,
+                                  otherUserName: _post.userName,
+                                  otherUserPhotoUrl: photoUrl, // fresh photo
+                                  referencedPost: _post,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.chat_bubble_outline_rounded,
+                                color: AppTheme.primary, size: 20),
+                          ),
+                        ),
+                    ],
+                  ),
+                ); // ← FutureBuilder close
+              },
+            ),
 
             // ── Owner status actions
             if (_isOwner) ...[
@@ -482,7 +480,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 }
 
-// ─── Sub-widgets (unchanged) ──────────────────────────────────────────────────
+//  Sub-widgets (unchanged)
 class _StatusBadgeLarge extends StatelessWidget {
   final String status;
   const _StatusBadgeLarge({required this.status});
@@ -490,9 +488,14 @@ class _StatusBadgeLarge extends StatelessWidget {
   Widget build(BuildContext context) {
     Color c;
     switch (status) {
-      case 'claimed':  c = Colors.orange; break;
-      case 'resolved': c = AppTheme.found; break;
-      default:         c = AppTheme.primary;
+      case 'claimed':
+        c = Colors.orange;
+        break;
+      case 'resolved':
+        c = AppTheme.found;
+        break;
+      default:
+        c = AppTheme.primary;
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -580,10 +583,16 @@ class _ColorRow extends StatelessWidget {
   final String color;
   const _ColorRow({required this.color});
   static const _map = {
-    'Black': Colors.black87, 'White': Colors.white70,
-    'Red': Colors.red, 'Blue': Colors.blue, 'Green': Colors.green,
-    'Yellow': Colors.yellow, 'Brown': Colors.brown, 'Grey': Colors.grey,
-    'Pink': Colors.pink, 'Orange': Colors.orange,
+    'Black': Colors.black87,
+    'White': Colors.white70,
+    'Red': Colors.red,
+    'Blue': Colors.blue,
+    'Green': Colors.green,
+    'Yellow': Colors.yellow,
+    'Brown': Colors.brown,
+    'Grey': Colors.grey,
+    'Pink': Colors.pink,
+    'Orange': Colors.orange,
   };
   @override
   Widget build(BuildContext context) => Padding(
@@ -599,7 +608,8 @@ class _ColorRow extends StatelessWidget {
           const Spacer(),
           Row(children: [
             Container(
-              width: 14, height: 14,
+              width: 14,
+              height: 14,
               decoration: BoxDecoration(
                 color: _map[color] ?? Colors.blueGrey,
                 shape: BoxShape.circle,
@@ -662,7 +672,7 @@ class _StatusBtn extends StatelessWidget {
       );
 }
 
-// ─── Fullscreen Image Viewer ──────────────────────────────────────────────────
+//  Fullscreen Image Viewer
 class _FullscreenImageViewer extends StatefulWidget {
   final List<String> images;
   final int initialIndex;
@@ -733,7 +743,8 @@ class _FullscreenImageViewerState extends State<_FullscreenImageViewer> {
           );
         },
       ),
-      // ── Dot indicators ──
+
+      // ── Dot indicators
       bottomNavigationBar: widget.images.length > 1
           ? Container(
               color: Colors.black,
@@ -759,12 +770,11 @@ class _FullscreenImageViewerState extends State<_FullscreenImageViewer> {
   }
 }
 
-// ─── Resolve Sheet — pick the user item was resolved with ─────────────────────
+// Resolve Sheet — pick the user item was resolved with
 class _ResolveSheet extends StatelessWidget {
   final List<UserModel> chatUsers;
   final ValueChanged<UserModel> onSelect;
-  const _ResolveSheet(
-      {required this.chatUsers, required this.onSelect});
+  const _ResolveSheet({required this.chatUsers, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
@@ -781,7 +791,8 @@ class _ResolveSheet extends StatelessWidget {
           // Handle
           Center(
             child: Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: AppTheme.border,
                 borderRadius: BorderRadius.circular(2),
@@ -791,14 +802,13 @@ class _ResolveSheet extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Title
-          const Text('Item kiske saath mila?',
+          const Text('Who received the item?',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: AppTheme.txtPri)),
           const SizedBox(height: 4),
-          const Text(
-              'Woh user select karo jis ke saath item resolve hua',
+          const Text('Select the user with whom the item was resolved.',
               style: TextStyle(fontSize: 13, color: AppTheme.txtSec)),
           const SizedBox(height: 20),
 
@@ -820,8 +830,7 @@ class _ResolveSheet extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 24,
-                        backgroundColor:
-                            AppTheme.primary.withOpacity(0.12),
+                        backgroundColor: AppTheme.primary.withOpacity(0.12),
                         backgroundImage: u.profileImageUrl.isNotEmpty
                             ? NetworkImage(u.profileImageUrl)
                             : null,
@@ -869,11 +878,10 @@ class _ResolveSheet extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              onSelect(UserModel(
-                  id: '', name: '', email: '', password: ''));
+              onSelect(UserModel(id: '', name: '', email: '', password: ''));
             },
             child: const Center(
-              child: Text('Kisi ko select na karo',
+              child: Text('Tap me, Leave it unselected.',
                   style: TextStyle(color: AppTheme.txtSec)),
             ),
           ),

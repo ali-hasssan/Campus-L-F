@@ -25,19 +25,19 @@ class _ChatScreenState extends State<ChatScreen> {
   final _ctrl = TextEditingController();
   final _scrollCtrl = ScrollController();
 
-  // ── Fix blink: read UID synchronously from FirebaseAuth — no async needed
+  // UID synchronously from FirebaseAuth — no async needed
   final String _myUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   String _otherPhotoUrl = '';
-  String _otherDept = ''; // department for appBar subtitle
+  String _otherDept = '';
   bool _sending = false;
+  bool _initialScrollDone = false;
 
   @override
   void initState() {
     super.initState();
     _otherPhotoUrl = widget.otherUserPhotoUrl;
 
-    // Fetch other user's profile (photo + department)
     FirebaseService.getUserById(widget.otherUserId).then((u) {
       if (!mounted || u == null) return;
       setState(() {
@@ -63,6 +63,21 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
+  void _scrollToBottom({bool animated = true}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollCtrl.hasClients) return;
+      if (animated) {
+        _scrollCtrl.animateTo(
+          _scrollCtrl.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      } else {
+        _scrollCtrl.jumpTo(_scrollCtrl.position.maxScrollExtent);
+      }
+    });
+  }
+
   Future<void> _send() async {
     final text = _ctrl.text.trim();
     if (text.isEmpty || _sending) return;
@@ -74,16 +89,8 @@ class _ChatScreenState extends State<ChatScreen> {
       toUserPhotoUrl: _otherPhotoUrl,
       message: text,
     );
+    _scrollToBottom();
     if (mounted) setState(() => _sending = false);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollCtrl.hasClients) {
-        _scrollCtrl.animateTo(
-          _scrollCtrl.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
   }
 
   @override
@@ -94,7 +101,6 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            // ── Avatar
             CircleAvatar(
               radius: 18,
               backgroundColor: AppTheme.primary.withOpacity(0.15),
@@ -114,7 +120,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   : null,
             ),
             const SizedBox(width: 10),
-            // ── Name + Department
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -139,14 +144,14 @@ class _ChatScreenState extends State<ChatScreen> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseService.messagesStream(widget.otherUserId),
               builder: (ctx, snap) {
-                if (snap.connectionState == ConnectionState.waiting) {
+                if (snap.connectionState == ConnectionState.waiting &&
+                    !snap.hasData) {
                   return const Center(
                       child:
                           CircularProgressIndicator(color: AppTheme.primary));
                 }
 
                 final raw = snap.data?.docs ?? [];
-
                 final docs = List.of(raw)
                   ..sort((a, b) {
                     final aTs = (a.data() as Map<String, dynamic>)['timestamp']
@@ -167,11 +172,11 @@ class _ChatScreenState extends State<ChatScreen> {
                         Icon(Icons.chat_bubble_outline_rounded,
                             size: 60, color: AppTheme.txtSec.withOpacity(0.3)),
                         const SizedBox(height: 12),
-                        const Text('Koi message nahi abhi',
+                        const Text('No Message Yet',
                             style: TextStyle(
                                 color: AppTheme.txtSec, fontSize: 14)),
                         const SizedBox(height: 4),
-                        const Text('Pehla message bhejo!',
+                        const Text('Send message to start conversation!',
                             style: TextStyle(
                                 color: AppTheme.txtSec, fontSize: 13)),
                       ],
@@ -179,19 +184,19 @@ class _ChatScreenState extends State<ChatScreen> {
                   );
                 }
 
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (_scrollCtrl.hasClients) {
-                    _scrollCtrl.jumpTo(_scrollCtrl.position.maxScrollExtent);
-                  }
-                });
+                if (!_initialScrollDone) {
+                  _initialScrollDone = true;
+                  _scrollToBottom(animated: false);
+                } else {
+                  _scrollToBottom();
+                }
 
                 return ListView.builder(
                   controller: _scrollCtrl,
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                   itemCount: docs.length,
                   itemBuilder: (_, i) {
                     final d = docs[i].data() as Map<String, dynamic>;
-                    // _myUid is now set synchronously — no blink
                     final isMe = d['senderId'] == _myUid;
                     final ts = d['timestamp'] as Timestamp?;
                     return _MessageBubble(
@@ -206,7 +211,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
 
-          // ── Input bar
+          //  Input bar
           SafeArea(
             top: false,
             child: Container(
@@ -231,7 +236,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       maxLines: 4,
                       minLines: 1,
                       decoration: InputDecoration(
-                        hintText: 'Message likho...',
+                        hintText: 'Message',
                         filled: true,
                         fillColor: AppTheme.bg,
                         contentPadding: const EdgeInsets.symmetric(
@@ -273,17 +278,27 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  //  Date and Time format
   String _formatTime(DateTime dt) {
     final now = DateTime.now();
-    if (now.difference(dt).inDays == 0) {
-      return '${dt.hour.toString().padLeft(2, '0')}:'
-          '${dt.minute.toString().padLeft(2, '0')}';
-    }
-    return '${dt.day}/${dt.month}';
+    final today = DateTime(now.year, now.month, now.day);
+    final msgDay = DateTime(dt.year, dt.month, dt.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    // 12-hour AM/PM
+    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final minute = dt.minute.toString().padLeft(2, '0');
+    final period = dt.hour < 12 ? 'AM' : 'PM';
+    final timeStr = '$hour:$minute $period';
+
+    if (msgDay == today) return timeStr;
+    if (msgDay == yesterday) return 'Yesterday';
+    // Older: show short date
+    return '${dt.day}/${dt.month}/${dt.year % 100}';
   }
 }
 
-// ─── Message Bubble — no avatar, clean bubbles only ──────────────────────────
+//  Message Bubble
 class _MessageBubble extends StatelessWidget {
   final String text;
   final bool isMe;

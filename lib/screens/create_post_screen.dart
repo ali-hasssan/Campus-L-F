@@ -24,7 +24,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   String? _category;
   bool _loading = false;
 
-
   // Local files picked by user (max 3)
   final List<File?> _pickedImages = [null, null, null];
   // Existing URLs from Firestore (edit mode)
@@ -141,8 +140,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             userName: user.name,
             userPhone: user.phone,
             userDepartment: user.department,
-            userPhotoUrl:
-                user.profileImageUrl,
+            userPhotoUrl: user.profileImageUrl,
             itemName: _nameCtrl.text.trim(),
             description: _descCtrl.text.trim(),
             color: _color!,
@@ -224,7 +222,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ),
               const SizedBox(height: 22),
 
-              // ── Item name
+              //  Item name
               _SectionLabel('Item Name'),
               const SizedBox(height: 8),
               TextFormField(
@@ -459,7 +457,7 @@ class _ImageSlot extends StatelessWidget {
       height: 90,
       child: Stack(
         children: [
-          // ── Image or placeholder ──
+          //  Image or placeholder
           GestureDetector(
             onTap: hasImage ? null : onPick,
             child: Container(
@@ -509,7 +507,7 @@ class _ImageSlot extends StatelessWidget {
             ),
           ),
 
-          // ── Remove button ──
+          //  Remove button
           if (hasImage && onRemove != null)
             Positioned(
               top: 4,
@@ -533,7 +531,6 @@ class _ImageSlot extends StatelessWidget {
     );
   }
 }
-
 
 class _TypeToggle extends StatelessWidget {
   final String value;
